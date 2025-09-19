@@ -1,0 +1,155 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "9941c9cd",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import pandas as pd\n",
+    "import seaborn as sns\n",
+    "import matplotlib.pyplot as plt\n",
+    "from sklearn.datasets import load_boston\n",
+    "import statsmodels.api as sm"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "aaea37dc",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "boston = load_boston()\n",
+    "df = pd.DataFrame(boston.data, columns=boston.feature_names)\n",
+    "df['MEDV'] = boston.target\n",
+    "\n",
+    "df.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "56074c32",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "plt.figure(figsize=(8,6))\n",
+    "sns.boxplot(y=df['MEDV'])\n",
+    "plt.title(\"Boxplot của MEDV (giá trị trung bình nhà)\")\n",
+    "plt.ylabel(\"MEDV (1000s USD)\")\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "7b657499",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "plt.figure(figsize=(8,6))\n",
+    "sns.countplot(x='CHAS', data=df)\n",
+    "plt.title(\"Barplot của biến CHAS (có nằm gần sông Charles hay không)\")\n",
+    "plt.xlabel(\"CHAS (0=Không, 1=Có)\")\n",
+    "plt.ylabel(\"Số lượng\")\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "1abb3411",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "plt.figure(figsize=(8,6))\n",
+    "sns.boxplot(x=pd.cut(df['AGE'], bins=5), y='MEDV', data=df)\n",
+    "plt.title(\"Boxplot MEDV theo AGE (tuổi trung bình của nhà)\")\n",
+    "plt.xlabel(\"AGE (phân nhóm theo bins)\")\n",
+    "plt.ylabel(\"MEDV (1000s USD)\")\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "29e6e7f2",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "plt.figure(figsize=(8,6))\n",
+    "sns.scatterplot(x='NOX', y='INDUS', data=df)\n",
+    "plt.title(\"Scatter plot NOX vs INDUS\")\n",
+    "plt.xlabel(\"Nồng độ Nitric Oxit (NOX)\")\n",
+    "plt.ylabel(\"Tỷ lệ đất công nghiệp (INDUS)\")\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "6da124d7",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "plt.figure(figsize=(8,6))\n",
+    "sns.scatterplot(x='PTRATIO', y='MEDV', data=df)\n",
+    "plt.title(\"Scatter plot MEDV theo PTRATIO (tỷ lệ học sinh trên giáo viên)\")\n",
+    "plt.xlabel(\"PTRATIO\")\n",
+    "plt.ylabel(\"MEDV (1000s USD)\")\n",
+    "plt.show()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "287100eb",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# H0: Không có mối quan hệ giữa PTRATIO và MEDV\n",
+    "# H1: Có mối quan hệ giữa PTRATIO và MEDV"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "de28fe85",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "X = sm.add_constant(df['DIS'])\n",
+    "y = df['MEDV']\n",
+    "model = sm.OLS(y, X).fit()\n",
+    "model.summary()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "4cd9ffc3",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "coef = model.params['DIS']\n",
+    "print(f\"Hệ số của DIS: {coef:.2f}\")\n",
+    "# Giải thích: Khi DIS tăng 1 đơn vị, MEDV thay đổi trung bình coef đơn vị (nghìn USD)."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "63974c74",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "print(\"Kết luận: Khoảng cách có trọng số đến trung tâm việc làm ảnh hưởng có ý nghĩa đến giá trị nhà (MEDV).\")"
+   ]
+  }
+ ],
+ "metadata": {},
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
